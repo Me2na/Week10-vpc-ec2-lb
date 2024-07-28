@@ -1,10 +1,10 @@
 # create vpc
 
 resource "aws_vpc" "vp1" {
-  cidr_block       = "10.1.0.0/16"
+  cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
   tags = {
-    Name = "ebl-vpc"
+    Name = "Elb-Vpc"
     Team = "wdp"
     env  = "dev"
   }
@@ -19,7 +19,7 @@ resource "aws_internet_gateway" "gtw1" {
 #public subnet 1
 resource "aws_subnet" "public1" {
   availability_zone       = "us-east-1a"
-  cidr_block              = "10.2.0.0/24"
+  cidr_block              = "10.0.1.0/24"
   map_public_ip_on_launch = true
   vpc_id                  = aws_vpc.vp1.id
   tags = {
@@ -27,10 +27,11 @@ resource "aws_subnet" "public1" {
   }
 
 }
+
 # public sub 2
 resource "aws_subnet" "public2" {
   availability_zone       = "us-east-1b"
-  cidr_block              = "10.3.0.0/24"
+  cidr_block              = "10.0.2.0/24"
   map_public_ip_on_launch = true
   vpc_id                  = aws_vpc.vp1.id
   tags = {
@@ -41,21 +42,23 @@ resource "aws_subnet" "public2" {
 #private subnet 1
 resource "aws_subnet" "private1" {
   availability_zone = "us-east-1a"
-  cidr_block        = "10.4.0.0/24"
+  cidr_block        = "10.0.3.0/24"
   vpc_id            = aws_vpc.vp1.id
   tags = {
     Name = "utc-private-subnet-1a"
   }
 }
+
 # private sub 2
 resource "aws_subnet" "private2" {
   availability_zone = "us-east-1b"
-  cidr_block        = "10.5.0.0/24"
+  cidr_block        = "10.0.4.0/24"
   vpc_id            = aws_vpc.vp1.id
   tags = {
     Name = "utc-private-subnet-1b"
   }
 }
+
 #Nat Gateway 
 resource "aws_eip" "el1" {
 }
@@ -63,6 +66,7 @@ resource "aws_nat_gateway" "nat1" {
   allocation_id = aws_eip.el1.id
   subnet_id     = aws_subnet.public1.id
 }
+
 # Public route table
 resource "aws_route_table" "rtpu" {
   vpc_id = aws_vpc.vp1.id
